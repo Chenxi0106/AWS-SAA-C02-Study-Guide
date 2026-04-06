@@ -473,16 +473,20 @@ Don't use when: need real-time continuous transfer
 ## Storage Gateway
 
 ### Storage Gateway Simplified:
-Storage Gateway is a service that connects on-premise environments with cloud-based storage in order to seamlessly and securely integrate an on-prem application with a cloud storage backend. Storage Gateway comes in three flavors: File Gateway, Volume Gateway and Tape Gateway.
+bridge between on-prem and AWS storage【S3】
+when: continuous integration, On-prem apps must access cloud storage, hybrid architecture
 
 
 ### Storage Gateway Key Details:
 - The Storage Gateway service can either be a physical device or a VM image downloaded onto a host in an on-prem data center. It acts as a bridge to send or receive data from AWS.
 - Storage Gateway can sit on top of VMWare's ESXi hypervisor for Linux machines and Microsoft’s Hyper-V hypervisor for Windows machines.
 - The three types of Storage Gateways are below:
-  - **File Gateway** - Operates via NFS or SMB and is used to store files in S3 over a network filesystem mount point in the supplied virtual machine. Simply put, you can think of a File Gateway as a file system mount on S3.
-  - **Volume Gateway** - Operates via iSCSI and is used to store copies of hard disk drives or virtual hard disk drives in S3. These can be achieved via *Stored Volumes* or *Cached Volumes*. Simply put, you can think of Volume Gateway as a way of storing virtual hard disk drives in the cloud. 
-  - **Tape Gateway** - Operates as a Virtual Tape Library
+  - **File Gateway** - Operates via NFS(Network File System) or SMB(Server Message Block) and is used to store files in S3 over a network filesystem mount point in the supplied virtual machine. Simply put, you can think of a File Gateway as a file system mount on S3. You can access remote file like accessing local file
+  - **Volume Gateway** - Operates via iSCSI and is used to store copies of hard disk drives or virtual hard disk drives in S3. Computer will treat it as a disk. These can be achieved via
+  -   *Stored Volumes*: data stored locally. Async backup to AWS
+  -   *Cached Volumes*. store in S3. Frequently accessed data cached locally
+  -   Simply put, you can think of Volume Gateway as a way of storing virtual hard disk drives in the cloud. 
+  - **Tape Gateway** - Operates as a Virtual Tape Library.  Replacs physical tape backup[Yes, some company still use tape as a way of file copy]. Store as Glacier
 - Relevant file information passing through Storage Gateway like file ownership, permissions, timestamps, etc. are stored as metadata for the objects that they belong to. Once these file details are stored in S3, they can be managed natively. This mean all S3 features like versioning, lifecycle management, bucket policies, cross region replication, etc. can be applied as a part of Storage Gateway.
 - Applications interfacing with AWS over the Volume Gateway is done over the iSCSI block protocol. Data written to these volumes can be asynchronously backed up into AWS Elastic Block Store (EBS) as point-in-time snapshots of the volumes’ content. These kind of snapshots act as incremental backups that capture only changed state similar to a pull request in Git. Further, all snapshots are compressed to reduce storage costs.
 - Tape Gateway offers a durable, cost-effective way of archiving and replicating data into S3 while getting rid of tapes (old-school data storage). The Virtual Tape Library, or VTL, leverages existing tape-based backup infrastructure to store data on virtual tape cartridges that you create on the Tape Gateway. It’s a great way to modernize and move backups into the cloud.
