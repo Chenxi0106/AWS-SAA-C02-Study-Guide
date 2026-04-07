@@ -479,6 +479,8 @@ when: continuous integration, On-prem apps must access cloud storage, hybrid arc
 
 ### Storage Gateway Key Details:
 - The Storage Gateway service can either be a physical device or a VM image downloaded onto a host in an on-prem data center. It acts as a bridge to send or receive data from AWS.
+- hybrid cloud bridge. continuous data flow. On-prem apps + need AWS storage continuously →
+- workflow: writes data - gateway intercepts - goes to AWS - frequently used data cached locally
 - Storage Gateway can sit on top of VMWare's ESXi hypervisor for Linux machines and Microsoft’s Hyper-V hypervisor for Windows machines.
 - The three types of Storage Gateways are below:
   - **File Gateway** - Operates via NFS(Network File System) or SMB(Server Message Block) and is used to store files in S3 over a network filesystem mount point in the supplied virtual machine. Simply put, you can think of a File Gateway as a file system mount on S3. You can access remote file like accessing local file
