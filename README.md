@@ -596,20 +596,22 @@ The following table highlights the many instance states that a VM can be in at a
 An Amazon EBS volume is a durable, block-level storage device that you can attach to a single EC2 instance. You can think of EBS as a cloud-based virtual hard disk. You can use EBS volumes as primary storage for data that requires frequent updates, such as the system drive for an instance or storage for a database application. You can also use them for throughput-intensive applications that perform continuous disk scans.
 
 ### EBS Key Details:
-- EBS volumes persist independently from the running life of an EC2 instance.
+- EBS volumes persist independently from the running life of an EC2 instance.Wherever your EC2 instance is, your volume for it is going to be in the same availability zone [single AZ/ 99.999% SLA.]
 - Each EBS volume is automatically replicated within its Availability Zone to protect from both component failure and disaster recovery (similar to Standard S3).
 - There are five different types of EBS Storage:
   - General Purpose (SSD)
+  -   GP2/GP3:general purpose
   - Provisioned IOPS (SSD, built for speed)
+  -   IO1/IO2: high performance
   - Throughput Optimized Hard Disk Drive (magnetic, built for larger data loads)
   - Cold Hard Disk Drive (magnetic, built for less frequently accessed workloads)
+  -   st1/sc1: cold storage
   - Magnetic
-- EBS Volumes offer 99.999% SLA.
-- Wherever your EC2 instance is, your volume for it is going to be in the same availability zone
 - An EBS volume can only be attached to one EC2 instance at a time.
 - After you create a volume, you can attach it to any EC2 instance in the same availability zone.
 - Amazon EBS provides the ability to create snapshots (backups) of any EBS volume and write a copy of the data in the volume to S3, where it is stored redundantly in multiple Availability Zones
 - An EBS snapshot reflects the contents of the volume during a concrete instant in time.
+- **AMI**
 - An image (AMI) is the same thing, but includes an operating system and a boot loader so it can be used to boot an instance. 
 - AMIs can also be thought of as pre-baked, launchable servers. AMIs are always used when launching an instance. 
 - When you provision an EC2 instance, an AMI is actually the first thing you are asked to specify. You can choose a pre-made AMI or choose your own made from an EBS snapshot.
@@ -624,20 +626,19 @@ An Amazon EBS volume is a durable, block-level storage device that you can attac
 - You can change EBS volumes on the fly, including the size and storage type
 
 ### SSD vs. HDD:
-- SSD-backed volumes are built for transactional workloads involving frequent read/write operations, where the dominant performance attribute is IOPS. **Rule of thumb**: Will your workload be IOPS heavy? Plan for SSD.
-- HDD-backed volumes are built for large streaming workloads where throughput (measured in MiB/s) is a better performance measure than IOPS. **Rule of thumb**: Will your workload be throughput heavy? Plan for HDD.
+- SSD-backed volumes are built for transactional workloads involving frequent read/write operations, where the dominant performance attribute is IOPS. **Rule of thumb**: Will your workload be IOPS heavy? boot volume? Plan for SSD.
+- HDD-backed volumes are built for large streaming workloads where throughput (measured in MiB/s) is a better performance measure than IOPS. **Rule of thumb**: Will your workload be throughput heavy? large sequential workloads? Plan for HDD.
 
 ![hdd_vs_ssd](https://user-images.githubusercontent.com/13093517/84944872-76165b80-b0b4-11ea-819c-a93deb999ea2.png)
 
 
 ### EBS Snapshots:
-- EBS Snapshots are point in time copies of volumes. You can think of Snapshots as photographs of the disk’s current state and the state of everything within it.
-- A snapshot is constrained to the region where it was created.
+- Stored in S3 (managed by AWS).backup EC2 volume. You can think of Snapshots as photographs of the disk’s current state and the state of everything within it.
 - Snapshots only capture the state of change from when the last snapshot was taken. This is what is recorded in each new snapshot, not the entire state of the server.
 - Because of this, it may take some time for your first snapshot to be created. This is because the very first snapshot's change of state is the entire new volume. Only afterwards will the delta be captured because there will then be something previous to compare against. 
 - EBS snapshots occur asynchronously which means that a volume can be used as normal while a snapshot is taking place.
 - When creating a snapshot for a future root device, it is considered best practices to stop the running instance where the original device is before taking the snapshot.
-- The easiest way to move an EC2 instance and a volume to another availability zone is to take a snapshot.
+- The easiest way to move an EC2 instance and a volume to another availability zone is to take a snapshot. 
 - When creating an image from a snapshot, if you want to deploy a different volume type for the new image (e.g. General Purpose SSD -> Throughput Optimized HDD) then you must make sure that the virtualization for the new image is hardware-assisted.
 - A short summary for creating copies of EC2 instances: Old instance -> Snapshot -> Image (AMI) -> New instance
 - You cannot delete a snapshot of an EBS Volume that is used as the root device of a registered AMI. If the original snapshot was deleted, then the AMI would not be able to use it as the basis to create new instances. For this reason, AWS protects you from accidentally deleting the EBS Snapshot, since it could be critical to your systems. To delete an EBS Snapshot attached to a registered AMI, first remove the AMI, then the snapshot can be deleted.
