@@ -646,13 +646,15 @@ An Amazon EBS volume is a durable, block-level storage device that you can attac
 
 
 ### EBS Root Device Storage:
-- All AMI root volumes (where the EC2's OS is installed) are of two types: EBS-backed or Instance Store-backed
+- All AMI root volumes (where the EC2's OS is installed) are of two types:
+- EBS-backed
+- Instance Store-backed
 - When you delete an EC2 instance that was using an Instance Store-backed root volume, your root volume will also be deleted. Any additional or secondary volumes will persist however.
 - If you use an EBS-backed root volume, the root volume will not be terminated with its EC2 instance when the instance is brought offline. EBS-backed volumes are not temporary storage devices like Instance Store-backed volumes.
 - EBS-backed Volumes are launched from an AWS EBS snapshot, as the name implies
 - Instance Store-backed Volumes are launched from an AWS S3 stored template. They are ephemeral, so be careful when shutting down an instance!
 - Secondary instance stores for an instance-store backed root device must be installed during the original provisioning of the server. You cannot add more after the fact. However, you can add EBS volumes to the same instance after the server's creation.
-- With these drawbacks of Instance Store volumes, why pick one? Because they have a very high IOPS rate. So while an Instance Store can't provide data persistence, it can provide much higher IOPS compared to network attached storage like EBS. 
+- With these drawbacks of Instance Store volumes, why pick one? Because they have a very high IOPS rate.
 - Further, Instance stores are ideal for temporary storage of information that changes frequently such as buffers, caches, scratch data, and other temporary content, or for data that is replicated across a fleet of instances, such as a load-balanced pool of web servers.
 - When to use one over the other?
   - Use EBS for DB data, critical logs, and application configs.
@@ -674,12 +676,16 @@ An Amazon EBS volume is a durable, block-level storage device that you can attac
 ## Elastic Network Interfaces (ENI)
 
 ### ENI Simplified:
-An elastic network interface is a networking component that represents a virtual network card. When you provision a new instance, there will be an ENI attached automatically and you can create and configure additional network interfaces if desired. When you move a network interface from one instance to another, network traffic is redirected to the new instance. 
+ENI: virtual network card[ip,security group, MAC address] attached to the EC2
+there will be an ENI attached automatically and you can create and configure additional network interfaces if desired. When you move a network interface from one instance to another, network traffic is redirected to the new instance. 
+deteched or attach to different EC2 in one AZ
+one EC2 can have multiple ENI
+ 
 
 ### ENI Key Details:
 - ENI is used mainly for low-budget, high-availability network solutions
 - However, if you suspect you need high network throughput then you can use Enhanced Networking ENI.
-- Enhanced Networking ENI uses single root I/O virtualization to provide high-performance networking capabilities on supported instance types. SR-IOV provides higher I/O and lower throughput and it ensures higher bandwidth, higher packet per second (PPS) performance, and consistently lower inter-instance latencies. SR-IOV does this by dedicating the interface to a single instance and effectively bypassing parts of the Hypervisor which allows for better performance.
+- Enhanced Networking ENI uses single root I/O virtualization to provide high-performance networking capabilities on supported instance types. SR-IOV provides higher I/O and lower throughput and it ensures higher bandwidth, higher packet per second (PPS) performance, and consistently lower inter-instance latencies. （SR-IOV）
 - Adding more ENIs won’t necessarily speed up your network throughput, but Enhanced Networking ENI will.
 - There is no extra charge for using Enhanced Networking ENI and the better network performance it provides. The only downside is that Enhanced Networking ENI is not available on all EC2 instance families and types.
 - You can attach a network interface to an EC2 instance in the following ways:
